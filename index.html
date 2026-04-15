@@ -585,11 +585,11 @@
       <span class="line2">Built on MetaTrader 5</span>
     </h1>
     <p class="hero-sub">
-      We craft <strong>bespoke forex trading algorithms</strong> tailored to your exact criteria —
+      We craft <strong> forex trading algorithms</strong> tailored to your exact criteria —
       entry logic, risk rules, take profit, drawdown limits. You tell us what you want, we build it and run it for you.
     </p>
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">Start Your Algo — ₹5,000</a>
+      <a href="#contact" class="btn-primary">Submit Your Algo Criteria</a>
       <a href="#how" class="btn-outline">See How It Works</a>
     </div>
   </div>
@@ -744,48 +744,6 @@
   </div>
 </section>
 
-<!-- MT5 SECTION -->
-<section id="mt5" style="flex-direction: row; display: flex; align-items: center; gap: 5rem;">
-  <div class="mt5-left fade-up">
-    <div class="section-tag">Platform</div>
-    <h2>Built for <span class="gold">MetaTrader 5</span></h2>
-    <p class="section-sub">Your algo runs as a native MQL5 Expert Advisor on MetaTrader 5 — the industry's most trusted institutional-grade trading platform. Works with any broker offering MT5.</p>
-    <div class="brokers-list">
-      <span class="broker-tag">FXTM</span>
-      <span class="broker-tag">XM</span>
-      <span class="broker-tag">IC Markets</span>
-      <span class="broker-tag">Exness</span>
-      <span class="broker-tag">FBS</span>
-      <span class="broker-tag">Pepperstone</span>
-      <span class="broker-tag">HFM</span>
-      <span class="broker-tag">OctaFX</span>
-      <span class="broker-tag">FP Markets</span>
-      <span class="broker-tag">Vantage</span>
-      <span class="broker-tag">FXGT</span>
-      <span class="broker-tag">+ Any MT5 Broker</span>
-    </div>
-  </div>
-  <div class="mt5-right fade-up fade-up-d3">
-    <div class="mt5-visual">
-      <div><span class="code-comment">// AlgoForge — Custom EA Template</span></div>
-      <div><span class="code-key">input</span> <span class="code-val">double</span> RiskPercent = <span class="code-str">1.5</span>;</div>
-      <div><span class="code-key">input</span> <span class="code-val">int</span>    FastMA    = <span class="code-str">9</span>;</div>
-      <div><span class="code-key">input</span> <span class="code-val">int</span>    SlowMA    = <span class="code-str">21</span>;</div>
-      <div><span class="code-key">input</span> <span class="code-val">int</span>    RSI_Period= <span class="code-str">14</span>;</div>
-      <div><span class="code-key">input</span> <span class="code-val">double</span> TP_Pips   = <span class="code-str">30</span>;</div>
-      <div><span class="code-key">input</span> <span class="code-val">double</span> SL_Pips   = <span class="code-str">20</span>;</div>
-      <div>&nbsp;</div>
-      <div><span class="code-comment">// Your custom entry logic here</span></div>
-      <div><span class="code-key">void</span> OnTick() {</div>
-      <div>&nbsp; <span class="code-val">if</span>(CrossAbove(fastMA, slowMA)</div>
-      <div>&nbsp;&nbsp;&nbsp;&amp;&amp; RSI() &lt; <span class="code-str">60</span>) {</div>
-      <div>&nbsp;&nbsp;&nbsp;<span class="code-key">OpenBuy</span>(RiskPercent, TP_Pips, SL_Pips);</div>
-      <div>&nbsp; }</div>
-      <div>}</div>
-      <div class="candle-anim" id="candleChart"></div>
-    </div>
-  </div>
-</section>
 
 <!-- TRUST -->
 <section id="trust">
