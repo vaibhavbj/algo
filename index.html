@@ -1,846 +1,1056 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AlgoForge — Your Strategy. Our Execution.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #08090d;
-      --bg2: #0e1018;
-      --bg3: #13151f;
-      --border: rgba(255,255,255,0.07);
-      --gold: #c9a84c;
-      --gold-light: #e8c97a;
-      --gold-dim: rgba(201,168,76,0.15);
-      --text: #e8e6df;
-      --text-muted: #7a7a8a;
-      --text-dim: #4a4a5a;
-      --green: #2ecc8a;
-      --red: #e05555;
-      --accent: #4f8ef7;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AlgoForge — Custom Forex Algorithms, On Demand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-dim: #8a6f2e;
+    --dark: #080a0f;
+    --dark2: #0d1017;
+    --dark3: #131820;
+    --dark4: #1a2130;
+    --text: #e8eaf0;
+    --text-muted: #7a8499;
+    --green: #00e5a0;
+    --red: #ff4466;
+    --border: rgba(201,168,76,0.18);
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      overflow-x: hidden;
-      cursor: none;
-    }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-    /* Custom cursor */
-    .cursor {
-      width: 10px; height: 10px;
-      background: var(--gold);
-      border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.1s ease;
-      mix-blend-mode: difference;
-    }
-    .cursor-ring {
-      width: 36px; height: 36px;
-      border: 1px solid rgba(201,168,76,0.5);
-      border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9998;
-      transition: transform 0.18s ease, width 0.2s, height 0.2s;
-    }
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s, width .2s, height .2s, opacity .2s;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform .18s cubic-bezier(.25,.46,.45,.94), width .25s, height .25s, border-color .2s;
+    opacity: .7;
+  }
+  a:hover ~ .cursor, button:hover ~ .cursor { width: 18px; height: 18px; }
 
-    /* Noise overlay */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 9997; opacity: 0.4;
-    }
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: .4;
+  }
 
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 22px 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(8,9,13,0.95), transparent);
-      backdrop-filter: blur(2px);
-    }
-    .nav-logo {
-      font-family: 'Instrument Serif', serif;
-      font-size: 1.5rem;
-      letter-spacing: -0.01em;
-      color: var(--text);
-    }
-    .nav-logo span { color: var(--gold); }
-    .nav-links { display: flex; gap: 36px; align-items: center; }
-    .nav-links a {
-      color: var(--text-muted); font-size: 0.82rem; font-weight: 400;
-      text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-cta {
-      background: var(--gold); color: #08090d !important;
-      padding: 9px 22px; border-radius: 2px;
-      font-weight: 600 !important; font-size: 0.78rem !important;
-      transition: background 0.2s !important;
-    }
-    .nav-cta:hover { background: var(--gold-light) !important; color: #08090d !important; }
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(8,10,15,0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    transition: padding .3s;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem; letter-spacing: .08em;
+    color: var(--gold); text-decoration: none;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: .9rem; font-weight: 500; letter-spacing: .04em;
+    transition: color .2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: var(--gold); color: var(--dark);
+    padding: .55rem 1.4rem; border-radius: 2px;
+    font-weight: 700; font-size: .85rem;
+    text-decoration: none; letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: background .2s, transform .15s;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--gold); border-radius: 2px; }
 
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start;
-      padding: 140px 60px 80px;
-      position: relative; overflow: hidden;
-    }
-    .hero-grid-bg {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
-    }
-    .hero-glow {
-      position: absolute; top: -20%; right: -10%;
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-glow-2 {
-      position: absolute; bottom: -10%; left: -5%;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(79,142,247,0.05) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.72rem; color: var(--gold);
-      letter-spacing: 0.2em; text-transform: uppercase;
-      margin-bottom: 28px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .hero-tag::before {
-      content: ''; width: 40px; height: 1px; background: var(--gold); display: block;
-    }
-    .hero h1 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(3rem, 7vw, 6.5rem);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: 750px;
-      margin-bottom: 28px;
-    }
-    .hero h1 em {
-      font-style: italic; color: var(--gold);
-    }
-    .hero-sub {
-      font-size: 1.05rem; color: var(--text-muted);
-      max-width: 480px; line-height: 1.7;
-      margin-bottom: 52px; font-weight: 300;
-    }
-    .hero-btns { display: flex; gap: 16px; align-items: center; }
-    .btn-primary {
-      background: var(--gold); color: #08090d;
-      padding: 14px 32px; border: none; border-radius: 2px;
-      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9rem;
-      letter-spacing: 0.04em; cursor: none;
-      transition: background 0.2s, transform 0.15s;
-      text-decoration: none; display: inline-block;
-    }
-    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
-    .btn-ghost {
-      background: transparent; color: var(--text-muted);
-      padding: 14px 32px; border: 1px solid var(--border); border-radius: 2px;
-      font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 0.9rem;
-      letter-spacing: 0.04em; cursor: none;
-      transition: border-color 0.2s, color 0.2s;
-      text-decoration: none; display: inline-block;
-    }
-    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+    padding: 0 4rem;
+    padding-top: 80px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 50%, rgba(201,168,76,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(0,229,160,0.04) 0%, transparent 60%),
+      linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 700px; }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem; color: var(--gold);
+    letter-spacing: .2em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: .8rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 32px; height: 1px; background: var(--gold);
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    line-height: .95; letter-spacing: .02em;
+    margin-bottom: 1.5rem;
+  }
+  h1 .accent { color: var(--gold); }
+  h1 .line2 { display: block; color: var(--text-muted); font-size: .6em; letter-spacing: .08em; }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--text-muted); line-height: 1.7;
+    max-width: 520px; margin-bottom: 2.5rem;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 600; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold); color: var(--dark);
+    padding: .9rem 2.2rem; border-radius: 2px;
+    font-weight: 700; font-size: .95rem;
+    text-decoration: none; letter-spacing: .06em;
+    text-transform: uppercase; border: none; cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 0 30px rgba(201,168,76,0.25);
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 0 50px rgba(201,168,76,0.4); }
+  .btn-outline {
+    background: transparent; color: var(--gold);
+    padding: .9rem 2.2rem; border-radius: 2px;
+    font-weight: 600; font-size: .95rem;
+    text-decoration: none; letter-spacing: .06em;
+    text-transform: uppercase; border: 1px solid var(--gold);
+    cursor: pointer; transition: background .2s, transform .15s;
+  }
+  .btn-outline:hover { background: rgba(201,168,76,0.08); transform: translateY(-2px); }
+  .hero-ticker {
+    position: absolute; bottom: 2rem; left: 0; right: 0;
+    overflow: hidden; border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,16,23,0.9);
+    padding: .6rem 0;
+  }
+  .ticker-track {
+    display: flex; gap: 3rem; white-space: nowrap;
+    animation: ticker 25s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem; letter-spacing: .05em;
+    display: flex; align-items: center; gap: .5rem; color: var(--text-muted);
+  }
+  .ticker-item .up { color: var(--green); }
+  .ticker-item .dn { color: var(--red); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* Ticker bar */
-    .ticker-wrap {
-      overflow: hidden; border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 0; background: var(--bg2);
-    }
-    .ticker-track {
-      display: flex; gap: 60px; animation: ticker 28s linear infinite;
-      white-space: nowrap; width: max-content;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .tick-item {
-      font-family: 'Space Mono', monospace; font-size: 0.75rem;
-      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-    }
-    .tick-name { color: var(--text-muted); }
-    .tick-val { color: var(--text); }
-    .tick-up { color: var(--green); }
-    .tick-down { color: var(--red); }
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--dark3);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 4rem;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 2rem;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem; color: var(--gold);
+    letter-spacing: .04em; line-height: 1;
+    display: block;
+  }
+  .stat-label {
+    font-size: .8rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .1em;
+    margin-top: .3rem;
+  }
 
-    /* Section base */
-    section { padding: 120px 60px; }
-    .section-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.68rem; color: var(--gold);
-      letter-spacing: 0.25em; text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    .section-title {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.1; letter-spacing: -0.02em;
-      margin-bottom: 20px;
-    }
-    .section-sub {
-      color: var(--text-muted); font-size: 1rem; line-height: 1.75;
-      max-width: 520px; font-weight: 300;
-    }
+  /* SECTION BASE */
+  section { padding: 6rem 4rem; }
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem; color: var(--gold);
+    letter-spacing: .2em; text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .8rem;
+  }
+  .section-tag::before { content: '//'; opacity: .5; }
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1; letter-spacing: .02em;
+    margin-bottom: 1rem;
+  }
+  h2 .gold { color: var(--gold); }
+  .section-sub {
+    color: var(--text-muted); font-size: 1rem; line-height: 1.8;
+    max-width: 540px; margin-bottom: 3.5rem;
+  }
 
-    /* HOW IT WORKS */
-    .how { background: var(--bg2); }
-    .how-inner { max-width: 1100px; margin: 0 auto; }
-    .how-header { display: flex; gap: 80px; margin-bottom: 80px; align-items: flex-end; }
-    .how-header-left { flex: 1; }
-    .how-header-right { flex: 0 0 360px; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-    .step {
-      background: var(--bg3); padding: 44px 36px;
-      border: 1px solid var(--border);
-      position: relative; overflow: hidden;
-      transition: border-color 0.3s;
-    }
-    .step:hover { border-color: rgba(201,168,76,0.3); }
-    .step::before {
-      content: attr(data-num);
-      position: absolute; top: -10px; right: 20px;
-      font-family: 'Instrument Serif', serif; font-size: 6rem;
-      color: rgba(255,255,255,0.03); font-style: italic;
-      line-height: 1; pointer-events: none;
-    }
-    .step-icon {
-      width: 44px; height: 44px; background: var(--gold-dim);
-      border: 1px solid rgba(201,168,76,0.2);
-      border-radius: 2px; display: flex; align-items: center; justify-content: center;
-      margin-bottom: 28px; font-size: 1.3rem;
-    }
-    .step h3 {
-      font-family: 'Instrument Serif', serif; font-size: 1.35rem;
-      margin-bottom: 14px; letter-spacing: -0.01em;
-    }
-    .step p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
+  /* HOW IT WORKS */
+  #how { background: var(--dark2); }
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+  .step {
+    background: var(--dark3);
+    padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    transition: background .3s;
+  }
+  .step:hover { background: var(--dark4); }
+  .step::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0); transform-origin: center;
+    transition: transform .4s;
+  }
+  .step:hover::before { transform: scaleX(1); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem; color: rgba(201,168,76,0.12);
+    line-height: 1; margin-bottom: .8rem;
+    transition: color .3s;
+  }
+  .step:hover .step-num { color: rgba(201,168,76,0.25); }
+  .step h3 {
+    font-size: 1.1rem; font-weight: 700; margin-bottom: .8rem;
+    color: var(--text);
+  }
+  .step p { color: var(--text-muted); font-size: .92rem; line-height: 1.7; }
+  .step-icon { font-size: 1.8rem; margin-bottom: 1rem; }
 
-    /* ALGO TYPES */
-    .algo-types { background: var(--bg); }
-    .algo-inner { max-width: 1100px; margin: 0 auto; }
-    .algo-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-bottom: 64px; align-items: center; }
-    .algo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
-    .algo-card {
-      background: var(--bg2); padding: 36px;
-      border: 1px solid var(--border);
-      transition: border-color 0.3s, background 0.3s;
-      position: relative; overflow: hidden;
-    }
-    .algo-card:hover { border-color: rgba(201,168,76,0.25); background: var(--bg3); }
-    .algo-card-num {
-      font-family: 'Space Mono', monospace; font-size: 0.68rem;
-      color: var(--gold); letter-spacing: 0.15em;
-      margin-bottom: 20px;
-    }
-    .algo-card h3 {
-      font-family: 'Instrument Serif', serif; font-size: 1.25rem;
-      margin-bottom: 10px;
-    }
-    .algo-card p { color: var(--text-muted); font-size: 0.87rem; line-height: 1.65; }
-    .algo-tags {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px;
-    }
-    .tag {
-      font-family: 'Space Mono', monospace; font-size: 0.62rem;
-      color: var(--text-dim); border: 1px solid var(--border);
-      padding: 4px 10px; border-radius: 1px; letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+  /* FEATURES */
+  #features { background: var(--dark); }
+  .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+  .feature-card {
+    border: 1px solid var(--border);
+    padding: 2rem; border-radius: 4px;
+    background: var(--dark2);
+    position: relative; overflow: hidden;
+    transition: border-color .3s, transform .3s;
+  }
+  .feature-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+  .feature-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .feat-icon {
+    width: 44px; height: 44px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 1.2rem;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .6rem; }
+  .feature-card p { color: var(--text-muted); font-size: .88rem; line-height: 1.7; }
 
-    /* PRICING */
-    .pricing { background: var(--bg2); }
-    .pricing-inner { max-width: 1100px; margin: 0 auto; }
-    .pricing-header { text-align: center; margin-bottom: 64px; }
-    .pricing-header .section-sub { margin: 0 auto; }
-    .pricing-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2px; max-width: 860px; margin: 0 auto; }
-    .price-card {
-      background: var(--bg3); padding: 52px 44px;
-      border: 1px solid var(--border); position: relative;
-    }
-    .price-card.featured {
-      background: linear-gradient(135deg, #13151f 0%, #1a1c28 100%);
-      border-color: rgba(201,168,76,0.35);
-    }
-    .price-badge {
-      position: absolute; top: -1px; left: 44px;
-      background: var(--gold); color: #08090d;
-      font-family: 'Space Mono', monospace; font-size: 0.62rem;
-      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 5px 14px;
-    }
-    .price-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
-    .price-name { font-family: 'Instrument Serif', serif; font-size: 1.6rem; margin-bottom: 28px; }
-    .price-amount {
-      display: flex; align-items: flex-end; gap: 6px;
-      margin-bottom: 8px;
-    }
-    .price-currency { font-size: 1.2rem; color: var(--gold); line-height: 1.8; }
-    .price-num { font-family: 'Instrument Serif', serif; font-size: 3.8rem; line-height: 1; color: var(--text); }
-    .price-period { color: var(--text-dim); font-size: 0.85rem; line-height: 2.2; }
-    .price-note { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 36px; }
-    .price-divider { height: 1px; background: var(--border); margin: 32px 0; }
-    .price-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
-    .price-features li {
-      display: flex; gap: 12px; align-items: flex-start;
-      font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;
-    }
-    .price-features li::before {
-      content: '✓'; color: var(--gold); font-size: 0.8rem;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .price-total {
-      background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.15);
-      padding: 14px 18px; border-radius: 2px; margin-bottom: 32px;
-      font-size: 0.82rem; color: var(--text-muted);
-    }
-    .price-total strong { color: var(--gold); }
-    .btn-full { width: 100%; text-align: center; padding: 15px; }
+  /* PRICING */
+  #pricing { background: var(--dark2); }
+  .pricing-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 2rem; max-width: 800px; }
+  .price-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 4px; padding: 2.5rem;
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s;
+  }
+  .price-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, var(--dark3) 0%, rgba(201,168,76,0.06) 100%);
+  }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-badge {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    background: var(--gold); color: var(--dark);
+    font-size: .7rem; font-weight: 700;
+    padding: .25rem .7rem; border-radius: 2px;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .price-label { font-size: .8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .8rem; }
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem; color: var(--gold);
+    line-height: 1; margin-bottom: .3rem;
+  }
+  .price-amount sup { font-size: 1.5rem; vertical-align: top; margin-top: .5rem; }
+  .price-period { font-size: .85rem; color: var(--text-muted); margin-bottom: 1.8rem; }
+  .price-features { list-style: none; }
+  .price-features li {
+    padding: .6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: .9rem; color: var(--text-muted);
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .price-features li::before { content: '→'; color: var(--gold); font-size: .8rem; }
+  .price-features li:last-child { border: none; }
+  .price-cta {
+    display: block; width: 100%;
+    margin-top: 2rem; padding: .9rem;
+    text-align: center; text-decoration: none;
+    font-weight: 700; font-size: .9rem;
+    letter-spacing: .08em; text-transform: uppercase;
+    border-radius: 2px; border: none; cursor: pointer;
+    transition: all .2s;
+  }
+  .price-cta.gold-btn { background: var(--gold); color: var(--dark); }
+  .price-cta.gold-btn:hover { background: var(--gold-light); }
+  .price-cta.outline-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+  .price-cta.outline-btn:hover { background: rgba(201,168,76,0.1); }
 
-    /* WHY US */
-    .why { background: var(--bg); }
-    .why-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
-    .why-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-    .stat-card {
-      background: var(--bg2); padding: 36px;
-      border: 1px solid var(--border);
-    }
-    .stat-num {
-      font-family: 'Instrument Serif', serif; font-size: 3rem;
-      color: var(--gold); line-height: 1;
-      margin-bottom: 8px;
-    }
-    .stat-label { color: var(--text-muted); font-size: 0.85rem; }
-    .why-points { display: flex; flex-direction: column; gap: 28px; margin-top: 40px; }
-    .why-point { display: flex; gap: 18px; }
-    .why-icon {
-      width: 36px; height: 36px; flex-shrink: 0;
-      background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.2);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-    }
-    .why-point-text h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 6px; }
-    .why-point-text p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+  /* MT5 SECTION */
+  #mt5 {
+    background: var(--dark);
+    display: flex; align-items: center;
+    gap: 5rem;
+  }
+  .mt5-left { flex: 1; }
+  .mt5-right { flex: 1; }
+  .mt5-visual {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 6px; padding: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem; color: var(--text-muted);
+    line-height: 1.9; position: relative;
+    overflow: hidden;
+  }
+  .mt5-visual::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--green));
+  }
+  .mt5-visual .code-comment { color: #4a5568; }
+  .mt5-visual .code-key { color: var(--gold); }
+  .mt5-visual .code-val { color: var(--green); }
+  .mt5-visual .code-str { color: #9ecbff; }
+  .brokers-list { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
+  .broker-tag {
+    padding: .4rem .9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px; font-size: .78rem;
+    color: var(--text-muted); letter-spacing: .04em;
+    transition: border-color .2s, color .2s;
+  }
+  .broker-tag:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* TESTIMONIALS */
-    .testimonials { background: var(--bg2); }
-    .testi-inner { max-width: 1100px; margin: 0 auto; }
-    .testi-header { text-align: center; margin-bottom: 64px; }
-    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-    .testi-card {
-      background: var(--bg3); padding: 40px 32px;
-      border: 1px solid var(--border);
-    }
-    .testi-quote {
-      font-family: 'Instrument Serif', serif; font-style: italic;
-      font-size: 1.08rem; line-height: 1.65;
-      color: var(--text); margin-bottom: 28px;
-    }
-    .testi-author { display: flex; align-items: center; gap: 14px; }
-    .testi-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.25);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Instrument Serif', serif; font-size: 1rem; color: var(--gold);
-    }
-    .testi-name { font-size: 0.88rem; font-weight: 500; }
-    .testi-role { font-size: 0.78rem; color: var(--text-muted); }
-    .stars { color: var(--gold); font-size: 0.8rem; margin-bottom: 20px; letter-spacing: 2px; }
+  /* TESTIMONIALS / TRUST */
+  #trust { background: var(--dark2); }
+  .trust-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+  .trust-card {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 4px; padding: 1.8rem;
+    transition: border-color .3s;
+  }
+  .trust-card:hover { border-color: var(--gold-dim); }
+  .trust-stars { color: var(--gold); font-size: 1rem; margin-bottom: 1rem; }
+  .trust-text { color: var(--text-muted); font-size: .9rem; line-height: 1.7; margin-bottom: 1.2rem; font-style: italic; }
+  .trust-author { font-size: .83rem; font-weight: 600; color: var(--text); }
+  .trust-role { font-size: .78rem; color: var(--text-muted); }
 
-    /* FAQ */
-    .faq { background: var(--bg); }
-    .faq-inner { max-width: 820px; margin: 0 auto; }
-    .faq-header { text-align: center; margin-bottom: 64px; }
-    .faq-list { display: flex; flex-direction: column; gap: 2px; }
-    .faq-item { background: var(--bg2); border: 1px solid var(--border); }
-    .faq-q {
-      padding: 24px 28px;
-      display: flex; justify-content: space-between; align-items: center;
-      cursor: none; font-weight: 400; font-size: 0.95rem;
-      transition: color 0.2s;
-    }
-    .faq-q:hover { color: var(--gold); }
-    .faq-icon {
-      color: var(--gold); font-size: 1.2rem; font-weight: 300;
-      transition: transform 0.25s; flex-shrink: 0; margin-left: 20px;
-    }
-    .faq-a {
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.35s ease, padding 0.25s;
-      padding: 0 28px;
-      color: var(--text-muted); font-size: 0.88rem; line-height: 1.75;
-    }
-    .faq-item.open .faq-a { max-height: 300px; padding: 0 28px 24px; }
-    .faq-item.open .faq-icon { transform: rotate(45deg); }
+  /* CONTACT */
+  #contact {
+    background: var(--dark3);
+    display: flex; align-items: flex-start;
+    gap: 5rem;
+  }
+  .contact-left { flex: 1; }
+  .contact-right { flex: 1; }
+  .contact-items { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+  .contact-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px; background: var(--dark2);
+    text-decoration: none; color: var(--text);
+    transition: border-color .2s, transform .2s;
+  }
+  .contact-item:hover { border-color: var(--gold); transform: translateX(4px); }
+  .contact-item-icon {
+    width: 40px; height: 40px;
+    background: rgba(201,168,76,0.1);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .contact-item-text strong { display: block; font-size: .85rem; font-weight: 700; margin-bottom: .2rem; }
+  .contact-item-text span { font-size: .82rem; color: var(--text-muted); }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block; font-size: .8rem;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: .4rem;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: .85rem 1rem;
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 2px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; outline: none;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--gold);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group select option { background: var(--dark2); }
 
-    /* CTA BAND */
-    .cta-band {
-      background: linear-gradient(135deg, #13151f, #0e1018);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 100px 60px; text-align: center; position: relative; overflow: hidden;
-    }
-    .cta-band::before {
-      content: '';
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 600px; height: 300px;
-      background: radial-gradient(ellipse, rgba(201,168,76,0.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta-band h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(2rem, 5vw, 4rem);
-      letter-spacing: -0.03em; margin-bottom: 16px;
-    }
-    .cta-band h2 em { font-style: italic; color: var(--gold); }
-    .cta-band p { color: var(--text-muted); margin-bottom: 44px; font-size: 1rem; }
-    .cta-contact {
-      display: flex; justify-content: center; gap: 16px;
-      flex-wrap: wrap; margin-top: 40px;
-    }
-    .contact-item {
-      display: flex; align-items: center; gap: 10px;
-      color: var(--text-muted); font-size: 0.85rem;
-    }
-    .contact-item span:first-child { color: var(--gold); }
+  /* FAQ */
+  #faq { background: var(--dark); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .faq-item {
+    border: 1px solid var(--border);
+    border-radius: 4px; overflow: hidden;
+    background: var(--dark2);
+  }
+  .faq-q {
+    padding: 1.3rem 1.5rem;
+    font-weight: 600; font-size: .95rem;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    transition: color .2s;
+  }
+  .faq-q:hover { color: var(--gold); }
+  .faq-q .faq-arrow {
+    width: 20px; height: 20px;
+    border: 1px solid var(--border); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; flex-shrink: 0;
+    transition: transform .3s, border-color .2s;
+    color: var(--gold);
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); border-color: var(--gold); }
+  .faq-a {
+    padding: 0 1.5rem;
+    color: var(--text-muted); font-size: .88rem; line-height: 1.7;
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s ease, padding .3s;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding: 0 1.5rem 1.3rem; }
 
-    /* FOOTER */
-    footer {
-      background: var(--bg); padding: 48px 60px;
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .footer-logo {
-      font-family: 'Instrument Serif', serif; font-size: 1.2rem;
-    }
-    .footer-logo span { color: var(--gold); }
-    .footer-copy { color: var(--text-dim); font-size: 0.8rem; }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a { color: var(--text-dim); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--gold); }
+  /* FOOTER */
+  footer {
+    background: var(--dark2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.5rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; color: var(--gold);
+    letter-spacing: .08em;
+  }
+  .footer-copy { font-size: .82rem; color: var(--text-muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: .82rem; color: var(--text-muted); text-decoration: none; transition: color .2s; }
+  .footer-links a:hover { color: var(--gold); }
 
-    /* SCROLL ANIMATIONS */
-    .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  /* FLOATING WA BUTTON */
+  .wa-float {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: #25D366; color: #fff;
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; text-decoration: none;
+    box-shadow: 0 4px 24px rgba(37,211,102,0.4);
+    z-index: 400;
+    transition: transform .2s, box-shadow .2s;
+    animation: pulse-wa 2.5s ease-in-out infinite;
+  }
+  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 32px rgba(37,211,102,0.6); }
+  @keyframes pulse-wa {
+    0%, 100% { box-shadow: 0 4px 24px rgba(37,211,102,0.4); }
+    50% { box-shadow: 0 4px 40px rgba(37,211,102,0.7); }
+  }
 
-    /* MOBILE */
-    @media (max-width: 900px) {
-      nav { padding: 18px 24px; }
-      .nav-links { display: none; }
-      .hero { padding: 120px 24px 60px; }
-      section { padding: 80px 24px; }
-      .how-header { flex-direction: column; gap: 32px; margin-bottom: 40px; }
-      .how-header-right { flex: auto; }
-      .steps { grid-template-columns: 1fr; }
-      .algo-header { grid-template-columns: 1fr; gap: 32px; }
-      .algo-grid { grid-template-columns: 1fr; }
-      .pricing-grid { grid-template-columns: 1fr; max-width: 480px; }
-      .why-inner { grid-template-columns: 1fr; gap: 60px; }
-      .testi-grid { grid-template-columns: 1fr; }
-      .cta-band { padding: 80px 24px; }
-      footer { flex-direction: column; gap: 24px; text-align: center; }
-      body { cursor: auto; }
-      .cursor, .cursor-ring { display: none; }
-    }
-  </style>
+  /* CANDLESTICK CHART ANIMATION */
+  .candle-anim {
+    display: flex; align-items: flex-end;
+    gap: 8px; height: 120px;
+    padding: 1rem;
+  }
+  .candle {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px; flex: 1; animation: candle-grow 1.5s ease forwards;
+    animation-delay: var(--delay, 0s);
+    opacity: 0;
+  }
+  @keyframes candle-grow {
+    from { opacity: 0; transform: scaleY(0.3); }
+    to { opacity: 1; transform: scaleY(1); }
+  }
+  .wick { width: 2px; background: var(--text-muted); flex-shrink: 0; }
+  .body { width: 100%; border-radius: 2px; min-height: 8px; }
+  .body.up { background: var(--green); }
+  .body.dn { background: var(--red); }
+
+  /* ANIMATIONS */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up-d1 { transition-delay: .1s; }
+  .fade-up-d2 { transition-delay: .2s; }
+  .fade-up-d3 { transition-delay: .3s; }
+  .fade-up-d4 { transition-delay: .4s; }
+  .fade-up-d5 { transition-delay: .5s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    #hero, section, #contact, #mt5 { padding: 4rem 1.5rem; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); padding: 2rem 1.5rem; }
+    .steps, .features-grid, .trust-grid, .faq-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    #contact, #mt5 { flex-direction: column; gap: 3rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
 
-  <!-- NAV -->
-  <nav>
-    <div class="nav-logo">Algo<span>Forge</span></div>
-    <div class="nav-links">
-      <a href="#how">How It Works</a>
-      <a href="#algo">Strategies</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact" class="nav-cta">Get Started</a>
-    </div>
-  </nav>
+<!-- NAV -->
+<nav id="mainNav">
+  <a class="nav-logo" href="#hero">ALGO<span>FORGE</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">Process</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#mt5">MT5</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Get Your Algo</a>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-glow-2"></div>
-    <div class="hero-tag">Custom Algorithmic Trading</div>
-    <h1>Your Strategy.<br><em>Our Execution.</em></h1>
-    <p class="hero-sub">We build precision trading algorithms tailored to your exact criteria — your risk profile, your market view, your edge. Deployed and managed for you.</p>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Custom Algorithmic Trading</div>
+    <h1>
+      Your Strategy.<br>
+      <span class="accent">Our Execution.</span>
+      <span class="line2">Built on MetaTrader 5</span>
+    </h1>
+    <p class="hero-sub">
+      We craft <strong>bespoke forex trading algorithms</strong> tailored to your exact criteria —
+      entry logic, risk rules, take profit, drawdown limits. You tell us what you want, we build it and run it for you.
+    </p>
     <div class="hero-btns">
-      <a href="#pricing" class="btn-primary">View Pricing</a>
-      <a href="#how" class="btn-ghost">How It Works</a>
-    </div>
-  </section>
-
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <div class="ticker-track">
-      <div class="tick-item"><span class="tick-name">NIFTY 50</span><span class="tick-val">22,147.90</span><span class="tick-up">+0.42%</span></div>
-      <div class="tick-item"><span class="tick-name">BANKNIFTY</span><span class="tick-val">47,892.15</span><span class="tick-down">−0.18%</span></div>
-      <div class="tick-item"><span class="tick-name">RELIANCE</span><span class="tick-val">2,941.60</span><span class="tick-up">+1.12%</span></div>
-      <div class="tick-item"><span class="tick-name">TCS</span><span class="tick-val">3,871.25</span><span class="tick-up">+0.65%</span></div>
-      <div class="tick-item"><span class="tick-name">HDFC BANK</span><span class="tick-val">1,612.40</span><span class="tick-down">−0.33%</span></div>
-      <div class="tick-item"><span class="tick-name">INFY</span><span class="tick-val">1,487.80</span><span class="tick-up">+0.89%</span></div>
-      <div class="tick-item"><span class="tick-name">SENSEX</span><span class="tick-val">73,158.24</span><span class="tick-up">+0.31%</span></div>
-      <div class="tick-item"><span class="tick-name">MIDCAP</span><span class="tick-val">41,204.50</span><span class="tick-up">+0.55%</span></div>
-      <!-- Duplicate for seamless loop -->
-      <div class="tick-item"><span class="tick-name">NIFTY 50</span><span class="tick-val">22,147.90</span><span class="tick-up">+0.42%</span></div>
-      <div class="tick-item"><span class="tick-name">BANKNIFTY</span><span class="tick-val">47,892.15</span><span class="tick-down">−0.18%</span></div>
-      <div class="tick-item"><span class="tick-name">RELIANCE</span><span class="tick-val">2,941.60</span><span class="tick-up">+1.12%</span></div>
-      <div class="tick-item"><span class="tick-name">TCS</span><span class="tick-val">3,871.25</span><span class="tick-up">+0.65%</span></div>
-      <div class="tick-item"><span class="tick-name">HDFC BANK</span><span class="tick-val">1,612.40</span><span class="tick-down">−0.33%</span></div>
-      <div class="tick-item"><span class="tick-name">INFY</span><span class="tick-val">1,487.80</span><span class="tick-up">+0.89%</span></div>
-      <div class="tick-item"><span class="tick-name">SENSEX</span><span class="tick-val">73,158.24</span><span class="tick-up">+0.31%</span></div>
-      <div class="tick-item"><span class="tick-name">MIDCAP</span><span class="tick-val">41,204.50</span><span class="tick-up">+0.55%</span></div>
+      <a href="#contact" class="btn-primary">Start Your Algo — ₹5,000</a>
+      <a href="#how" class="btn-outline">See How It Works</a>
     </div>
   </div>
-
-  <!-- HOW IT WORKS -->
-  <section class="how" id="how">
-    <div class="how-inner">
-      <div class="how-header fade-up">
-        <div class="how-header-left">
-          <div class="section-label">Process</div>
-          <h2 class="section-title">From idea to<br>live deployment</h2>
-        </div>
-        <div class="how-header-right">
-          <p class="section-sub">We handle the full engineering stack — strategy logic, backtesting, broker integration, and live monitoring — so you focus on what you know best: the market.</p>
-        </div>
-      </div>
-      <div class="steps">
-        <div class="step fade-up" data-num="1">
-          <div class="step-icon">💬</div>
-          <h3>Discovery Call</h3>
-          <p>Share your trading idea, entry/exit criteria, instruments, risk limits, and timeframes. We listen and document every detail.</p>
-        </div>
-        <div class="step fade-up" data-num="2" style="transition-delay:0.1s">
-          <div class="step-icon">⚙️</div>
-          <h3>Build & Backtest</h3>
-          <p>Our quant team codes your algorithm, runs historical backtests, and shares a detailed performance report for your approval.</p>
-        </div>
-        <div class="step fade-up" data-num="3" style="transition-delay:0.2s">
-          <div class="step-icon">🚀</div>
-          <h3>Deploy & Monitor</h3>
-          <p>Once approved, your algo goes live on your broker account. We monitor execution 24/5 and alert you to any anomalies.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ALGO TYPES -->
-  <section class="algo-types" id="algo">
-    <div class="algo-inner">
-      <div class="algo-header fade-up">
-        <div>
-          <div class="section-label">Strategies We Build</div>
-          <h2 class="section-title">Any edge,<br>engineered precisely</h2>
-        </div>
-        <div>
-          <p class="section-sub">No template strategies. Every algorithm is built ground-up to your exact specifications — indicators, logic, risk rules, all of it.</p>
-        </div>
-      </div>
-      <div class="algo-grid">
-        <div class="algo-card fade-up">
-          <div class="algo-card-num">01</div>
-          <h3>Options Strategies</h3>
-          <p>Iron condors, straddles, ratio spreads, delta-neutral setups — built with real-time Greeks management and defined risk parameters.</p>
-          <div class="algo-tags">
-            <span class="tag">Nifty</span><span class="tag">BankNifty</span><span class="tag">FinNifty</span><span class="tag">Weekly Expiry</span>
-          </div>
-        </div>
-        <div class="algo-card fade-up" style="transition-delay:0.1s">
-          <div class="algo-card-num">02</div>
-          <h3>Intraday Momentum</h3>
-          <p>Breakout, mean-reversion, VWAP-based, or opening range systems. Works across equities, futures, and indices.</p>
-          <div class="algo-tags">
-            <span class="tag">Futures</span><span class="tag">Equity</span><span class="tag">1min–15min</span>
-          </div>
-        </div>
-        <div class="algo-card fade-up" style="transition-delay:0.15s">
-          <div class="algo-card-num">03</div>
-          <h3>Positional Swing</h3>
-          <p>Multi-day holding strategies based on your technical or fundamental criteria, with trailing stops and partial exit logic.</p>
-          <div class="algo-tags">
-            <span class="tag">Swing</span><span class="tag">Daily</span><span class="tag">Multi-leg</span>
-          </div>
-        </div>
-        <div class="algo-card fade-up" style="transition-delay:0.2s">
-          <div class="algo-card-num">04</div>
-          <h3>Custom Indicators</h3>
-          <p>Have a unique indicator or proprietary signal? We code it precisely, test it rigorously, and integrate it into a fully automated system.</p>
-          <div class="algo-tags">
-            <span class="tag">Custom Logic</span><span class="tag">Any Timeframe</span><span class="tag">Any Asset</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <section class="pricing" id="pricing">
-    <div class="pricing-inner">
-      <div class="pricing-header fade-up">
-        <div class="section-label">Pricing</div>
-        <h2 class="section-title">Simple, transparent fees</h2>
-        <p class="section-sub">No hidden charges. No profit sharing. Pay once to build, then a flat monthly fee to keep it running flawlessly.</p>
-      </div>
-      <div class="pricing-grid">
-        <div class="price-card fade-up">
-          <div class="price-label">One Time</div>
-          <div class="price-name">Algo Development</div>
-          <div class="price-amount">
-            <span class="price-currency">₹</span>
-            <span class="price-num">5,000</span>
-          </div>
-          <p class="price-note">Paid once. Yours forever.</p>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li>Discovery & requirements session</li>
-            <li>Full algorithm coding to your criteria</li>
-            <li>Backtesting with detailed report</li>
-            <li>Broker API integration (Zerodha / AngelOne / Upstox)</li>
-            <li>Paper trading validation</li>
-            <li>One round of revisions included</li>
-          </ul>
-          <a href="#contact" class="btn-primary btn-full">Build My Algo</a>
-        </div>
-        <div class="price-card featured fade-up" style="transition-delay:0.1s">
-          <div class="price-badge">Most Popular</div>
-          <div class="price-label">Monthly</div>
-          <div class="price-name">Live Execution & Monitoring</div>
-          <div class="price-amount">
-            <span class="price-currency">₹</span>
-            <span class="price-num">1,000</span>
-            <span class="price-period">/mo</span>
-          </div>
-          <p class="price-note">After your algo is live.</p>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li>24/5 live execution monitoring</li>
-            <li>Instant alerts on anomalies or errors</li>
-            <li>Server hosting & uptime management</li>
-            <li>Monthly performance summary</li>
-            <li>Minor logic tweaks included</li>
-            <li>Priority support via WhatsApp</li>
-          </ul>
-          <div class="price-total">
-            Total first month: <strong>₹6,000</strong> &nbsp;·&nbsp; From month 2: <strong>₹1,000/mo</strong>
-          </div>
-          <a href="#contact" class="btn-primary btn-full">Get Started Today</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY US -->
-  <section class="why">
-    <div class="why-inner">
-      <div class="fade-up">
-        <div class="section-label">Why AlgoForge</div>
-        <h2 class="section-title">Built for serious traders</h2>
-        <p class="section-sub" style="margin-bottom:0">We're not a template factory. Every algo is handcrafted, every line of code reviewed, and every deployment tested before it touches real capital.</p>
-        <div class="why-points">
-          <div class="why-point">
-            <div class="why-icon">🎯</div>
-            <div class="why-point-text">
-              <h4>Your Criteria, Not Ours</h4>
-              <p>You define the rules. We code them exactly as specified — no unsolicited "improvements."</p>
-            </div>
-          </div>
-          <div class="why-point">
-            <div class="why-icon">🔒</div>
-            <div class="why-point-text">
-              <h4>Your Account, Your Control</h4>
-              <p>The algo runs on your broker account. We never have withdrawal access. Your capital is always yours.</p>
-            </div>
-          </div>
-          <div class="why-point">
-            <div class="why-icon">📊</div>
-            <div class="why-point-text">
-              <h4>Transparent Reporting</h4>
-              <p>Monthly P&L reports, trade logs, and execution analysis. No black boxes.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="fade-up" style="transition-delay:0.1s">
-        <div class="why-stats">
-          <div class="stat-card">
-            <div class="stat-num">50+</div>
-            <div class="stat-label">Algos Deployed</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">98%</div>
-            <div class="stat-label">Uptime Guaranteed</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">1d</div>
-            <div class="stat-label">Average Build Time</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">₹0</div>
-            <div class="stat-label">Profit Sharing</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <div class="testi-inner">
-      <div class="testi-header fade-up">
-        <div class="section-label">Client Stories</div>
-        <h2 class="section-title">Traders who made the switch</h2>
-      </div>
-      <div class="testi-grid">
-        <div class="testi-card fade-up">
-          <div class="stars">★★★★★</div>
-          <div class="testi-quote">"I had an options strategy running in my head for 2 years. AlgoForge turned it into a live system in 6 days. Now it runs on its own every morning."</div>
-          <div class="testi-author">
-            <div class="testi-avatar">R</div>
-            <div><div class="testi-name">Rahul Mehta</div><div class="testi-role">Options Trader, Mumbai</div></div>
-          </div>
-        </div>
-        <div class="testi-card fade-up" style="transition-delay:0.1s">
-          <div class="stars">★★★★★</div>
-          <div class="testi-quote">"The ₹1,000/month monitoring is worth every rupee. I was manually watching screens 7 hours a day. Now I don't have to babysit my own strategy."</div>
-          <div class="testi-author">
-            <div class="testi-avatar">P</div>
-            <div><div class="testi-name">Priya Sharma</div><div class="testi-role">Intraday Equity Trader, Pune</div></div>
-          </div>
-        </div>
-        <div class="testi-card fade-up" style="transition-delay:0.2s">
-          <div class="stars">★★★★★</div>
-          <div class="testi-quote">"They didn't just code what I asked — they pointed out edge cases in my logic I hadn't thought of. Incredibly professional team."</div>
-          <div class="testi-author">
-            <div class="testi-avatar">A</div>
-            <div><div class="testi-name">Arjun Nair</div><div class="testi-role">Swing Trader, Bangalore</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" id="faq">
-    <div class="faq-inner">
-      <div class="faq-header fade-up">
-        <div class="section-label">FAQ</div>
-        <h2 class="section-title">Common questions</h2>
-      </div>
-      <div class="faq-list">
-        <div class="faq-item fade-up">
-          <div class="faq-q">Which brokers do you support? <span class="faq-icon">+</span></div>
-          <div class="faq-a">We currently support Zerodha (Kite API), AngelOne (Smart API), Upstox, and Fyers. If you use a different broker, reach out and we'll check compatibility.</div>
-        </div>
-        <div class="faq-item fade-up">
-          <div class="faq-q">Do I need any coding knowledge? <span class="faq-icon">+</span></div>
-          <div class="faq-a">Zero. You just need to explain your strategy clearly — in plain English, a PDF, or a whiteboard sketch. We handle all the technical implementation.</div>
-        </div>
-        <div class="faq-item fade-up">
-          <div class="faq-q">How long does it take to build my algo? <span class="faq-icon">+</span></div>
-          <div class="faq-a">Typical turnaround is 5–10 business days depending on strategy complexity. You'll receive a backtest report before we go live, and you have full approval rights.</div>
-        </div>
-        <div class="faq-item fade-up">
-          <div class="faq-q">Is my money safe? Do you have access to my funds? <span class="faq-icon">+</span></div>
-          <div class="faq-a">Absolutely not. The algorithm connects to your broker account via API keys that have order-placement permissions only — no withdrawal access. Your capital is always under your control.</div>
-        </div>
-        <div class="faq-item fade-up">
-          <div class="faq-q">Can I request changes to the algo after it's live? <span class="faq-icon">+</span></div>
-          <div class="faq-a">Minor logic tweaks (e.g. adjusting SL/target levels, changing position size) are included in the monthly fee. Major strategy overhauls may incur a small additional charge, discussed upfront.</div>
-        </div>
-        <div class="faq-item fade-up">
-          <div class="faq-q">What if I want to stop the monthly service? <span class="faq-icon">+</span></div>
-          <div class="faq-a">Cancel anytime with 7 days' notice. The algo code belongs to you — we'll hand it over so you can self-host if you wish.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA BAND -->
-  <div class="cta-band" id="contact">
-    <h2>Ready to automate<br>your <em>edge?</em></h2>
-    <p>Talk to us today. Free consultation, no commitment.</p>
-    <a href="https://wa.me/918605633962?text=Hi%2C%20I%27m%20interested%20in%20a%20custom%20algo" class="btn-primary" style="font-size:1rem; padding:16px 40px;">
-      📲 WhatsApp Us Now
-    </a>
-    <div class="cta-contact">
-      <div class="contact-item"><span>✉</span><span>vbj151@gmail.com</span></div>
-      <div class="contact-item"><span>📍</span><span>Nashik, Maharashtra</span></div>
-      <div class="contact-item"><span>🕐</span><span>Mon–Sat, 9am–7pm IST</span></div>
+  <div class="hero-ticker">
+    <div class="ticker-track" id="ticker">
+      <span class="ticker-item">EUR/USD <span class="up">▲ 1.0842</span></span>
+      <span class="ticker-item">GBP/USD <span class="dn">▼ 1.2651</span></span>
+      <span class="ticker-item">USD/JPY <span class="up">▲ 153.42</span></span>
+      <span class="ticker-item">XAU/USD <span class="up">▲ 2381.50</span></span>
+      <span class="ticker-item">USD/CAD <span class="dn">▼ 1.3621</span></span>
+      <span class="ticker-item">AUD/USD <span class="up">▲ 0.6548</span></span>
+      <span class="ticker-item">NZD/USD <span class="dn">▼ 0.5990</span></span>
+      <span class="ticker-item">USD/CHF <span class="up">▲ 0.9041</span></span>
+      <span class="ticker-item">EUR/GBP <span class="dn">▼ 0.8572</span></span>
+      <span class="ticker-item">BTC/USD <span class="up">▲ 67,420</span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">EUR/USD <span class="up">▲ 1.0842</span></span>
+      <span class="ticker-item">GBP/USD <span class="dn">▼ 1.2651</span></span>
+      <span class="ticker-item">USD/JPY <span class="up">▲ 153.42</span></span>
+      <span class="ticker-item">XAU/USD <span class="up">▲ 2381.50</span></span>
+      <span class="ticker-item">USD/CAD <span class="dn">▼ 1.3621</span></span>
+      <span class="ticker-item">AUD/USD <span class="up">▲ 0.6548</span></span>
+      <span class="ticker-item">NZD/USD <span class="dn">▼ 0.5990</span></span>
+      <span class="ticker-item">USD/CHF <span class="up">▲ 0.9041</span></span>
+      <span class="ticker-item">EUR/GBP <span class="dn">▼ 0.8572</span></span>
+      <span class="ticker-item">BTC/USD <span class="up">▲ 67,420</span></span>
     </div>
   </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-logo">Algo<span>Forge</span></div>
-    <div class="footer-copy">© 2026 AlgoForge. All rights reserved.</div>
-    <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="#contact">Contact</a>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item fade-up">
+    <span class="stat-num" data-count="120">0</span>
+    <span class="stat-label">Algos Delivered</span>
+  </div>
+  <div class="stat-item fade-up fade-up-d1">
+    <span class="stat-num" data-count="50">0</span>
+    <span class="stat-label">Brokers Supported</span>
+  </div>
+  <div class="stat-item fade-up fade-up-d2">
+    <span class="stat-num" data-count="98">0</span>
+    <span class="stat-label">% Client Satisfaction</span>
+  </div>
+  <div class="stat-item fade-up fade-up-d3">
+    <span class="stat-num" data-count="7">0</span>
+    <span class="stat-label">Days Avg Delivery</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-tag">Process</div>
+  <h2>From Concept to <span class="gold">Live Trading</span></h2>
+  <p class="section-sub">Three straightforward steps separate you from a fully automated, running trading strategy built around your rules.</p>
+  <div class="steps">
+    <div class="step fade-up">
+      <div class="step-icon">💬</div>
+      <div class="step-num">01</div>
+      <h3>Share Your Criteria</h3>
+      <p>Tell us your trading strategy — entry/exit signals, indicators (MA, RSI, MACD, Bollinger, custom), risk %, lot size rules, news filters, session timing, and any special logic.</p>
     </div>
-  </footer>
+    <div class="step fade-up fade-up-d2">
+      <div class="step-icon">⚙️</div>
+      <div class="step-num">02</div>
+      <h3>We Build & Backtest</h3>
+      <p>Our MQL5 developers code the Expert Advisor, backtest it on historical data, optimize parameters, and deliver you a clean, documented EA ready for MT5.</p>
+    </div>
+    <div class="step fade-up fade-up-d4">
+      <div class="step-icon">🚀</div>
+      <div class="step-num">03</div>
+      <h3>Deploy & We Monitor</h3>
+      <p>Subscribe to our monthly running plan and we handle VPS deployment, monitoring, updates, and broker connectivity — so your algo trades 24/5 without you lifting a finger.</p>
+    </div>
+  </div>
+</section>
 
-  <script>
-    // Custom cursor
-    const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-    function animCursor() {
-      cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
-      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-      ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
-      requestAnimationFrame(animCursor);
-    }
-    animCursor();
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-tag">Capabilities</div>
+  <h2>What We <span class="gold">Build For You</span></h2>
+  <p class="section-sub">Every algorithm is bespoke. Here's the kind of logic we can encode into your system.</p>
+  <div class="features-grid">
+    <div class="feature-card fade-up">
+      <div class="feat-icon">📊</div>
+      <h3>Multi-Indicator Strategies</h3>
+      <p>Any combination of technical indicators — trend-following, mean reversion, momentum, or hybrid approaches across multiple timeframes.</p>
+    </div>
+    <div class="feature-card fade-up fade-up-d1">
+      <div class="feat-icon">🛡️</div>
+      <h3>Advanced Risk Management</h3>
+      <p>Dynamic lot sizing, drawdown protection, daily loss limits, equity curve filters, and trailing stops. Your capital, protected intelligently.</p>
+    </div>
+    <div class="feature-card fade-up fade-up-d2">
+      <div class="feat-icon">⏱️</div>
+      <h3>Session & Time Filters</h3>
+      <p>Trade only during London, New York, Tokyo, or custom time windows. Avoid news events, weekends, or low-liquidity periods automatically.</p>
+    </div>
+    <div class="feature-card fade-up fade-up-d3">
+      <div class="feat-icon">🔁</div>
+      <h3>Martingale / Grid Logic</h3>
+      <p>Configurable martingale multipliers, grid spacing, max orders, and recovery logic — fully customized to your risk appetite and account size.</p>
+    </div>
+    <div class="feature-card fade-up fade-up-d4">
+      <div class="feat-icon">📬</div>
+      <h3>Alerts & Notifications</h3>
+      <p>Real-time trade alerts via MT5 push notifications, email alerts on TP/SL hit, daily P&L summaries, and drawdown warnings.</p>
+    </div>
+    <div class="feature-card fade-up fade-up-d5">
+      <div class="feat-icon">🔧</div>
+      <h3>Post-Delivery Support</h3>
+      <p>Bug fixes, parameter tweaks, and logic refinements included within the first 30 days. We stand behind every algo we ship.</p>
+    </div>
+  </div>
+</section>
 
-    // FAQ accordion
-    document.querySelectorAll('.faq-q').forEach(q => {
-      q.addEventListener('click', () => {
-        const item = q.parentElement;
-        const wasOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!wasOpen) item.classList.add('open');
-      });
-    });
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-tag">Pricing</div>
+  <h2>Simple, <span class="gold">Transparent Fees</span></h2>
+  <p class="section-sub">No hidden charges. No revenue share. One-time build fee, then an affordable monthly to keep everything running.</p>
+  <div class="pricing-grid">
+    <div class="price-card featured fade-up">
+      <div class="price-badge">Most Popular</div>
+      <div class="price-label">One-Time Build</div>
+      <div class="price-amount"><sup>₹</sup>5,000</div>
+      <div class="price-period">One-time payment</div>
+      <ul class="price-features">
+        <li>Full custom EA development</li>
+        <li>Backtest report included</li>
+        <li>MQL5 source code delivered</li>
+        <li>30-day bug fix warranty</li>
+        <li>Works on any MT5 broker</li>
+        <li>Unlimited logic complexity</li>
+      </ul>
+      <a href="#contact" class="price-cta gold-btn">Get Started Now</a>
+    </div>
+    <div class="price-card fade-up fade-up-d2">
+      <div class="price-label">Monthly Running</div>
+      <div class="price-amount"><sup>₹</sup>1,000</div>
+      <div class="price-period">Per month, after build</div>
+      <ul class="price-features">
+        <li>24/5 VPS deployment</li>
+        <li>Live monitoring & alerts</li>
+        <li>Broker connectivity checks</li>
+        <li>Parameter adjustments</li>
+        <li>Monthly performance report</li>
+        <li>Cancel anytime</li>
+      </ul>
+      <a href="#contact" class="price-cta outline-btn">Add Monthly Plan</a>
+    </div>
+  </div>
+</section>
 
-    // Scroll fade-up
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
-  </script>
+<!-- MT5 SECTION -->
+<section id="mt5" style="flex-direction: row; display: flex; align-items: center; gap: 5rem;">
+  <div class="mt5-left fade-up">
+    <div class="section-tag">Platform</div>
+    <h2>Built for <span class="gold">MetaTrader 5</span></h2>
+    <p class="section-sub">Your algo runs as a native MQL5 Expert Advisor on MetaTrader 5 — the industry's most trusted institutional-grade trading platform. Works with any broker offering MT5.</p>
+    <div class="brokers-list">
+      <span class="broker-tag">FXTM</span>
+      <span class="broker-tag">XM</span>
+      <span class="broker-tag">IC Markets</span>
+      <span class="broker-tag">Exness</span>
+      <span class="broker-tag">FBS</span>
+      <span class="broker-tag">Pepperstone</span>
+      <span class="broker-tag">HFM</span>
+      <span class="broker-tag">OctaFX</span>
+      <span class="broker-tag">FP Markets</span>
+      <span class="broker-tag">Vantage</span>
+      <span class="broker-tag">FXGT</span>
+      <span class="broker-tag">+ Any MT5 Broker</span>
+    </div>
+  </div>
+  <div class="mt5-right fade-up fade-up-d3">
+    <div class="mt5-visual">
+      <div><span class="code-comment">// AlgoForge — Custom EA Template</span></div>
+      <div><span class="code-key">input</span> <span class="code-val">double</span> RiskPercent = <span class="code-str">1.5</span>;</div>
+      <div><span class="code-key">input</span> <span class="code-val">int</span>    FastMA    = <span class="code-str">9</span>;</div>
+      <div><span class="code-key">input</span> <span class="code-val">int</span>    SlowMA    = <span class="code-str">21</span>;</div>
+      <div><span class="code-key">input</span> <span class="code-val">int</span>    RSI_Period= <span class="code-str">14</span>;</div>
+      <div><span class="code-key">input</span> <span class="code-val">double</span> TP_Pips   = <span class="code-str">30</span>;</div>
+      <div><span class="code-key">input</span> <span class="code-val">double</span> SL_Pips   = <span class="code-str">20</span>;</div>
+      <div>&nbsp;</div>
+      <div><span class="code-comment">// Your custom entry logic here</span></div>
+      <div><span class="code-key">void</span> OnTick() {</div>
+      <div>&nbsp; <span class="code-val">if</span>(CrossAbove(fastMA, slowMA)</div>
+      <div>&nbsp;&nbsp;&nbsp;&amp;&amp; RSI() &lt; <span class="code-str">60</span>) {</div>
+      <div>&nbsp;&nbsp;&nbsp;<span class="code-key">OpenBuy</span>(RiskPercent, TP_Pips, SL_Pips);</div>
+      <div>&nbsp; }</div>
+      <div>}</div>
+      <div class="candle-anim" id="candleChart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust">
+  <div class="section-tag">Testimonials</div>
+  <h2>What Our <span class="gold">Clients Say</span></h2>
+  <p class="section-sub">Real traders, real results. Here's what people are saying about AlgoForge.</p>
+  <div class="trust-grid">
+    <div class="trust-card fade-up">
+      <div class="trust-stars">★★★★★</div>
+      <p class="trust-text">"Explained my crossover strategy in one call. They delivered a polished EA with backtest in under a week. Running live on Exness and performing exactly as expected."</p>
+      <div class="trust-author">Rahul M.</div>
+      <div class="trust-role">Retail Trader, Mumbai</div>
+    </div>
+    <div class="trust-card fade-up fade-up-d2">
+      <div class="trust-stars">★★★★★</div>
+      <p class="trust-text">"I had a complex grid strategy with news filter. AlgoForge coded it perfectly. The monthly running service is worth every rupee — zero maintenance on my end."</p>
+      <div class="trust-author">Priya S.</div>
+      <div class="trust-role">Prop Trader, Pune</div>
+    </div>
+    <div class="trust-card fade-up fade-up-d4">
+      <div class="trust-stars">★★★★★</div>
+      <p class="trust-text">"Best investment in my trading career. ₹5,000 for a fully automated system that runs 24/5 without emotion. Highly recommended for serious traders."</p>
+      <div class="trust-author">Sanjay K.</div>
+      <div class="trust-role">Swing Trader, Nashik</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-tag">FAQ</div>
+  <h2>Common <span class="gold">Questions</span></h2>
+  <p class="section-sub" style="margin-bottom: 2.5rem;">Everything you need to know before getting started.</p>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q">Do I need coding knowledge? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">None at all. You share your trading logic in plain language — entry conditions, exit rules, risk settings — and we handle all the MQL5 coding from scratch.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Which MT5 brokers are supported? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Any broker that offers MetaTrader 5 is supported — Exness, XM, IC Markets, FP Markets, Pepperstone, OctaFX, HFM, FXTM, and hundreds more. If they have MT5, we can run on it.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How long does it take to deliver? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Most algos are delivered within 5–7 business days. Complex strategies with multiple conditions or multi-symbol logic may take up to 10 days. We always confirm timelines upfront.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What if the algo doesn't perform? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">We build exactly what you specify and include a backtest report. Market conditions change — we offer parameter adjustment support for 30 days. We don't guarantee profit, but we guarantee the logic is correct.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I get the source code? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Yes. The full MQL5 source code is yours upon payment. You own the algo completely and can modify it, share it, or use it on multiple accounts as you wish.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can you replicate a manual strategy? <span class="faq-arrow">+</span></div>
+      <div class="faq-a">Absolutely. If you have a discretionary strategy with clear, rule-based triggers, we can automate it. Schedule a call and walk us through your setup — we'll assess feasibility for free.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left fade-up">
+    <div class="section-tag">Get In Touch</div>
+    <h2>Ready to <span class="gold">Automate?</span></h2>
+    <p class="section-sub">Reach out via WhatsApp for the fastest response, or drop us an email. We're based in Nashik, Maharashtra and available 9am–8pm IST.</p>
+    <div class="contact-items">
+      <a href="https://wa.me/918605633962" target="_blank" class="contact-item">
+        <div class="contact-item-icon">💬</div>
+        <div class="contact-item-text">
+          <strong>WhatsApp (Fastest)</strong>
+          <span>+91 86056 33962</span>
+        </div>
+      </a>
+      <a href="mailto:vbj151@gmail.com" class="contact-item">
+        <div class="contact-item-icon">✉️</div>
+        <div class="contact-item-text">
+          <strong>Email</strong>
+          <span>vbj151@gmail.com</span>
+        </div>
+      </a>
+      <div class="contact-item" style="cursor: default;">
+        <div class="contact-item-icon">📍</div>
+        <div class="contact-item-text">
+          <strong>Location</strong>
+          <span>Nashik, Maharashtra, India</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-right fade-up fade-up-d3">
+    <div style="background: var(--dark2); border: 1px solid var(--border); border-radius: 4px; padding: 2rem;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem;">Send Us Your Requirements</h3>
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="form-group">
+        <label>Phone / WhatsApp</label>
+        <input type="tel" placeholder="+91 00000 00000">
+      </div>
+      <div class="form-group">
+        <label>Your Broker</label>
+        <select>
+          <option value="">Select your broker</option>
+          <option>Exness</option>
+          <option>XM</option>
+          <option>IC Markets</option>
+          <option>FP Markets</option>
+          <option>Pepperstone</option>
+          <option>OctaFX</option>
+          <option>Other MT5 Broker</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Describe Your Strategy</label>
+        <textarea placeholder="E.g. I want a scalping EA on EURUSD M15, using 9/21 EMA crossover, RSI confirmation, 1% risk per trade, London session only..."></textarea>
+      </div>
+      <button class="btn-primary" style="width: 100%; border: none;" onclick="handleSubmit(this)">Send on WhatsApp →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ALGO<span style="color: var(--text);">FORGE</span></div>
+  <p class="footer-copy">© 2025 AlgoForge. Nashik, Maharashtra. All rights reserved.<br>
+  <span style="font-size:.75rem; opacity:.6;">Trading involves substantial risk. Past performance is not indicative of future results.</span></p>
+  <div class="footer-links">
+    <a href="#how">Process</a>
+    <a href="#pricing">Pricing</a>
+    <a href="mailto:vbj151@gmail.com">Email</a>
+    <a href="https://wa.me/918605633962">WhatsApp</a>
+  </div>
+</footer>
+
+<!-- FLOATING WA -->
+<a class="wa-float" href="https://wa.me/918605633962?text=Hi%20AlgoForge!%20I%20want%20a%20custom%20forex%20algo%20on%20MT5." target="_blank" title="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" width="26" height="26" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  }, 60);
+});
+document.querySelectorAll('a, button, .faq-q').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1.5)';
+    ring.style.width = '50px'; ring.style.height = '50px';
+    ring.style.borderColor = 'var(--gold-light)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    ring.style.width = '36px'; ring.style.height = '36px';
+    ring.style.borderColor = 'var(--gold)';
+  });
+});
+
+// SCROLL ANIMATIONS
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// COUNTER ANIMATION
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = +el.dataset.count;
+    const suffix = target === 98 ? '%' : target === 7 ? ' Days' : '+';
+    let current = 0;
+    const step = target / 60;
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = Math.floor(current) + suffix;
+      if (current >= target) clearInterval(timer);
+    }, 20);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));
+
+// CANDLE CHART
+function buildCandleChart() {
+  const chart = document.getElementById('candleChart');
+  if (!chart) return;
+  const candles = [
+    { up: true, bodyH: 30, wickT: 10, wickB: 8 },
+    { up: false, bodyH: 20, wickT: 6, wickB: 12 },
+    { up: true, bodyH: 45, wickT: 8, wickB: 6 },
+    { up: false, bodyH: 15, wickT: 14, wickB: 4 },
+    { up: true, bodyH: 38, wickT: 5, wickB: 10 },
+    { up: true, bodyH: 55, wickT: 10, wickB: 6 },
+    { up: false, bodyH: 22, wickT: 8, wickB: 12 },
+    { up: true, bodyH: 42, wickT: 6, wickB: 8 },
+  ];
+  candles.forEach((c, i) => {
+    const candle = document.createElement('div');
+    candle.className = 'candle';
+    candle.style.setProperty('--delay', `${i * 0.12}s`);
+    candle.innerHTML = `
+      <div class="wick" style="height:${c.wickT}px"></div>
+      <div class="body ${c.up ? 'up' : 'dn'}" style="height:${c.bodyH}px"></div>
+      <div class="wick" style="height:${c.wickB}px"></div>
+    `;
+    chart.appendChild(candle);
+  });
+}
+buildCandleChart();
+
+// FAQ
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// FORM SUBMIT → WHATSAPP
+function handleSubmit(btn) {
+  const inputs = document.querySelectorAll('#contact input, #contact select, #contact textarea');
+  const name = inputs[0].value || 'Not provided';
+  const phone = inputs[1].value || 'Not provided';
+  const broker = inputs[2].value || 'Not specified';
+  const strategy = inputs[3].value || 'Please contact me';
+  const msg = `Hi AlgoForge! 🤖\n\nName: ${name}\nPhone: ${phone}\nBroker: ${broker}\n\nStrategy:\n${strategy}`;
+  window.open(`https://wa.me/918605633962?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainNav');
+  if (window.scrollY > 60) { nav.style.padding = '0.8rem 4rem'; }
+  else { nav.style.padding = '1.2rem 4rem'; }
+});
+
+// HAMBURGER TOGGLE
+document.getElementById('ham').addEventListener('click', function() {
+  const links = document.querySelector('.nav-links');
+  if (links.style.display === 'flex') {
+    links.style.display = '';
+  } else {
+    links.style.display = 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--dark2)';
+    links.style.padding = '1.5rem 1.5rem';
+    links.style.borderBottom = '1px solid var(--border)';
+  }
+});
+</script>
 </body>
 </html>
